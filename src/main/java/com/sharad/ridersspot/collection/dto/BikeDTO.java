@@ -1,4 +1,4 @@
-package com.sharad.ridersspot.collection;
+package com.sharad.ridersspot.collection.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -14,10 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "bike")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Bike {
-    @Id
+public class BikeDTO {
     private String id;
     private String brand;
     private String model;

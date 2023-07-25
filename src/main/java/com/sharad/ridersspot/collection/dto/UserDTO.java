@@ -1,6 +1,7 @@
-package com.sharad.ridersspot.collection;
+package com.sharad.ridersspot.collection.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.sharad.ridersspot.collection.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "user")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class User {
-    @Id
+public class UserDTO {
     private String id;
     private String name;
     private String email;
