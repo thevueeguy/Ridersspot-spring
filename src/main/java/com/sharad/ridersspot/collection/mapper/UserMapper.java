@@ -17,7 +17,7 @@ public class UserMapper {
                     .build();
     }
 
-    public UserDTO convertToDocument(User user) {
+    public UserDTO convertToDTO(User user) {
         return UserDTO.builder()
                 .id(user.getId())
                 .email(user.getEmail())
