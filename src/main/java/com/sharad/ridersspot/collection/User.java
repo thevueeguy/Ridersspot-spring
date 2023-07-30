@@ -14,7 +14,6 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
-@RequiredArgsConstructor
 @NoArgsConstructor
 @Document(collection = "user")
 @JsonInclude(JsonInclude.Include.NON_NULL)

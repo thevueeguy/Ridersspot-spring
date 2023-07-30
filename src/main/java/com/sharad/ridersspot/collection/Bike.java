@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @AllArgsConstructor
-@RequiredArgsConstructor
 @NoArgsConstructor
 @Document(collection = "bike")
 @JsonInclude(JsonInclude.Include.NON_NULL)

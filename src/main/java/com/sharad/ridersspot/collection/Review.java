@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @Builder
 @AllArgsConstructor
-@RequiredArgsConstructor
 @NoArgsConstructor
 @Document(collection = "review")
 @JsonInclude(JsonInclude.Include.NON_NULL)
