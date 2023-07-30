@@ -14,8 +14,8 @@ public interface JwtService {
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver);
     public Claims extractAllClaims(String token);
     public Boolean isTokenExpired(String token);
-    public Boolean validateToken(String token, UserDetails userDetails);
-    public String generateToken(String userName);
-    public String createToken(Map<String, Object> claims, String userName);
+    public Boolean isTokenValid(String token, UserDetails userDetails);
+    public String generateToken(UserDetails userDetails);
+    public String createToken(Map<String, Object> claims, UserDetails userDetails);
     public Key getSignKey();
 }
