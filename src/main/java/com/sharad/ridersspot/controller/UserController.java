@@ -1,6 +1,5 @@
 package com.sharad.ridersspot.controller;
 
-import com.sharad.ridersspot.collection.User;
 import com.sharad.ridersspot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    public String createUser(User user) {
-        return userService.create(user);
-    }
+//    @PostMapping("/frames")
+//    ResponseEntity<FrameDTO> addFrame(@RequestBody FrameDTO frameDTO) throws IdAlreadyExistsException {
+//        FrameDTO addedFrameDto = frameService.addFrame(frameDTO);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("desc", "Added a frame");
+//        return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(addedFrameDto);
+//    }
+
 }
