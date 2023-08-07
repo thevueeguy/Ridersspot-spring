@@ -2,18 +2,21 @@ package com.sharad.ridersspot.service.implementation;
 
 import com.sharad.ridersspot.collection.Credentials;
 import com.sharad.ridersspot.collection.Role;
-import com.sharad.ridersspot.collection.Token;
 import com.sharad.ridersspot.collection.User;
 import com.sharad.ridersspot.collection.dto.UserDTO;
 import com.sharad.ridersspot.collection.mapper.UserMapper;
+import com.sharad.ridersspot.exception.UserAlreadyExistsException;
 import com.sharad.ridersspot.repository.UserRepository;
 import com.sharad.ridersspot.service.AuthenticationService;
 import com.sharad.ridersspot.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.security.auth.login.CredentialNotFoundException;
 
 @Service
 public class AuthenticationUserImpl implements AuthenticationService {
@@ -30,7 +33,10 @@ public class AuthenticationUserImpl implements AuthenticationService {
     @Autowired
     private UserMapper userMapper;
     @Override
-    public Token register(UserDTO userDTO) {
+    public String register(UserDTO userDTO) throws UserAlreadyExistsException {
+        if(userRepository.existsById(userDTO.getId()) || userRepository.existsByEmail(userDTO.getEmail()))
+            throw new UserAlreadyExistsException("User with this email is already registered.");
+
         User user = User
                         .builder()
                         .id(userDTO.getId())
@@ -41,25 +47,27 @@ public class AuthenticationUserImpl implements AuthenticationService {
 
         userRepository.insert(user);
         String jwtToken = jwtService.generateToken(user);
-        return Token
-                .builder()
-                .token(jwtToken)
-                .build();
+        return jwtToken;
     }
 
     @Override
-    public Token authenticate(Credentials credentials) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        credentials.getEmail(),
-                        credentials.getPassword()
-                )
-        );
-        User user = userRepository.findByEmail(credentials.getEmail()).orElseThrow();
+    public String authenticate(Credentials credentials) throws UsernameNotFoundException, CredentialNotFoundException {
+        if(!userRepository.existsByEmail(credentials.getEmail()))
+            throw new UsernameNotFoundException("User not found");
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            credentials.getEmail(),
+                            credentials.getPassword()
+                    )
+            );
+        } catch (Exception e) {
+            throw new CredentialNotFoundException("Invalid Credentials");
+        }
+
+        User user = userRepository.findByEmail(credentials.getEmail()).get();
         String jwtToken = jwtService.generateToken(user);
-        return Token
-                .builder()
-                .token(jwtToken)
-                .build();
+        return jwtToken;
     }
 }

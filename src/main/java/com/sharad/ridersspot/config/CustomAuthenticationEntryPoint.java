@@ -15,9 +15,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         JSONObject body = new JSONObject();
 
-        final String expiredMsg = (String) request.getAttribute("expired");
+        final String message = (String) request.getAttribute("message");
         body.put("status", 403);
-        body.put("message", (expiredMsg != null) ? expiredMsg : "Access denied");
+        body.put("message", (message != null) ? message : "Access denied");
 
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(403);

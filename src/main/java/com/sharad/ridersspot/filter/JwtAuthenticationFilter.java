@@ -1,9 +1,9 @@
 package com.sharad.ridersspot.filter;
 
 import com.sharad.ridersspot.service.JwtService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -30,18 +31,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-            final String authHeader = request.getHeader("Authorization");
             final String jwt;
             final String userEmail;
 
-            if(authHeader == null || !authHeader.startsWith("Bearer")){
+            Cookie[] cookies = request.getCookies();
+
+            if(cookies == null) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
         try {
-            jwt = authHeader.substring(7);
-            userEmail = jwtService.extractUsername(jwt);
+                jwt = Arrays.stream(cookies)
+                        .filter(cookie -> cookie.getName().equals("token"))
+                        .findFirst()
+                        .map(Cookie::getValue)
+                        .orElse(null);
+
+              userEmail = jwtService.extractUsername(jwt);
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
@@ -58,8 +65,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
             }
-        } catch (ExpiredJwtException e) {
-            request.setAttribute("expired", "Token is expired");
+        } catch (Exception e) {
+            request.setAttribute("message", "Token is expired");
         }
             filterChain.doFilter(request, response);
     }
