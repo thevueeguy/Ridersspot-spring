@@ -5,6 +5,8 @@ import com.sharad.ridersspot.collection.dto.UserDTO;
 import com.sharad.ridersspot.exception.UserAlreadyExistsException;
 import com.sharad.ridersspot.service.AuthenticationService;
 import com.sharad.ridersspot.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -42,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/authenticate")
-    ResponseEntity<String> authenticate(@RequestBody Credentials credentials) throws UsernameNotFoundException {
+    ResponseEntity<String> authenticate(@RequestBody Credentials credentials, HttpServletResponse response) throws UsernameNotFoundException {
         String token;
         HttpHeaders headers = new HttpHeaders();
         try {
@@ -55,7 +57,15 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(headers).body("Invalid Credentials.");
         }
         headers.add("description", "User has been authenticated successfully.");
-        headers.add("Set-Cookie", "token="+token);
+
+        Cookie jwtTokenCookie = new Cookie("token", token);
+
+        jwtTokenCookie.setMaxAge(3600);
+        jwtTokenCookie.setSecure(true);
+        jwtTokenCookie.setHttpOnly(true);
+        jwtTokenCookie.setPath("/");
+        response.addCookie(jwtTokenCookie);
+
         return ResponseEntity.status(HttpStatus.ACCEPTED).headers(headers).body("User has been authenticated successfully.");
     }
 

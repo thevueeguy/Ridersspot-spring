@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.security.auth.login.CredentialNotFoundException;
 
 @Service
-public class AuthenticationUserImpl implements AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Autowired
     private UserRepository userRepository;
