@@ -21,13 +21,6 @@ public class UserServiceImpl implements UserService {
         return users.stream().map(user -> userMapper.convertToDTO(user)).toList();
     }
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
-        User user = userMapper.convertToDocument(userDTO);
-        user = userRepository.insert(user);
-
-        return userMapper.convertToDTO(user);
-    }
-    @Override
     public UserDTO editUser(UserDTO userDTO) {
         User user = userMapper.convertToDocument(userDTO);
         user = userRepository.save(user);
